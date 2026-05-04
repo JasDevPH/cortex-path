@@ -1,6 +1,11 @@
 // lib/generate-flow.ts
 
-import type { Edge, Node } from "@xyflow/react";
+import {
+  MarkerType,
+  type Edge,
+  type Node,
+} from "@xyflow/react";
+
 import type { TreeNode } from "./build-tree";
 
 type FlowResult = {
@@ -44,9 +49,15 @@ export function generateFlow(tree: TreeNode): FlowResult {
 
       if (parentId) {
         edges.push({
-          id: `${parentId}-${id}`,
-          source: parentId,
-          target: id,
+            id: `${parentId}-${id}`,
+            source: parentId,
+            target: id,
+
+            type: "smoothstep",
+
+            markerEnd: {
+                type: MarkerType.ArrowClosed,
+            },
         });
       }
 
