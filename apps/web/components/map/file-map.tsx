@@ -1,11 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import {
   ReactFlow,
   Background,
   applyNodeChanges,
-  applyEdgeChanges,
   NodeChange
 } from "@xyflow/react";
 
@@ -16,7 +15,6 @@ import FileNode from "./file-node";
 import { buildTree } from "@/lib/build-tree";
 import { generateFlow } from "@/lib/generate-flow";
 import { layoutGraph } from "@/lib/layout-graph";
-import { useMemo } from "react";
 import type { Edge } from "@xyflow/react";
 
 const nodeTypes = {
@@ -59,8 +57,8 @@ export default function FileMap() {
       summary: "Navbar component",
     },
     {
-      path: "project/components/ui/ns1r.tsx",
-      summary: "Navbar component",
+      path: "project/components/ui/nsasdfasdfasdfasdfasdfasdfasdr.tsx",
+      summary: "Navbar componenslkajsdflkasjdflkasfjlkasjdflajsdfaslkdfjasljfkasdlf",
     },
     {
       path: "project/components/ui/ns3r.tsx",
@@ -85,17 +83,6 @@ export default function FileMap() {
       [id]: !prev[id],
     }));
   };
-
-  // const nodesWithState = useMemo(() => {
-  //   return nodes.map((n) => ({
-  //     ...n,
-  //     data: {
-  //       ...n.data,
-  //       open: !!openNodes[n.id],
-  //       toggle: toggleNode,
-  //     },
-  //   }));
-  // }, [nodes, openNodes]);
 
   const filteredNodes = useMemo(() => {
     const hidden = new Set<string>();
