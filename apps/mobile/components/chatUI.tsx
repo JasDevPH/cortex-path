@@ -8,6 +8,7 @@ export default function ChatUI() {
   const insets = useSafeAreaInsets();
   const [input, setInput] = useState('');
   const debouncedInput = useDebounce(input, 500);
+  const canSend = debouncedInput.trim().length > 0 && debouncedInput.trim() === input.trim();
   const scrollViewRef = useRef<ScrollView>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
@@ -34,7 +35,7 @@ export default function ChatUI() {
   ]);
 
   const handleSend = useCallback(() => {
-    if (input.trim()) {
+    if (canSend) {
       const newMessage = {
         id: messages.length + 1,
         text: input,
@@ -55,7 +56,7 @@ export default function ChatUI() {
         setIsBotTyping(false);
       }, 1500);
     }
-  }, [input, messages]);
+  }, [canSend, input, messages]);
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top }} className="bg-slate-50">
@@ -152,10 +153,10 @@ export default function ChatUI() {
 
             <TouchableOpacity
               onPress={handleSend}
-              disabled={!input.trim()}
-              className={`ml-2 w-9 h-9 rounded-full items-center justify-center mb-[2px] ${input.trim() ? 'bg-blue-600' : 'bg-slate-200'}`}
+              disabled={!canSend}
+              className={`ml-2 w-9 h-9 rounded-full items-center justify-center mb-[2px] ${canSend ? 'bg-blue-600' : 'bg-slate-200'}`}
             >
-              <Send size={16} color={input.trim() ? "white" : "#94a3b8"} style={{ marginLeft: input.trim() ? 2 : 0 }} />
+              <Send size={16} color={canSend ? "white" : "#94a3b8"} style={{ marginLeft: canSend ? 2 : 0 }} />
             </TouchableOpacity>
           </View>
         </View>
