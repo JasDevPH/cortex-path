@@ -7,15 +7,4 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model File {
-  id        String   @id @default(cuid())
-  path      String   @unique
-  name      String
-  ext       String
-  imports   String[]
-  exports   String[]
-  summary   String?
-  embedding Unsupported("vector(384)")?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+
