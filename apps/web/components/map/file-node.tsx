@@ -25,10 +25,8 @@ export default function FileNode({ id, data }: FileNodeProps) {
             onClick={(e) => {
                 e.stopPropagation();
                 
-            if (file && data.toggle) {
                 // console.log("NODE", id, data.open);
                 data.toggle(id);
-            }
       }}
       className="relative rounded-2xl border border-zinc-700 bg-zinc-900 p-4 w-64 shadow-lg cursor-pointer"
     >

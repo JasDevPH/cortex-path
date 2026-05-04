@@ -4,28 +4,43 @@ export type FileRecord = {
 };
 
 export type TreeNode = {
-  __summary?: string;
-  [key: string]: TreeNode | string | undefined;
+  name: string;
+  type: "file" | "folder";
+  summary?: string;
+  children: Record<string, TreeNode>;
 };
 
 export function buildTree(files: FileRecord[]) {
-  const tree: TreeNode = {};
+  const root: TreeNode = {
+    name: "root",
+    type: "folder",
+    children: {},
+  };
 
   for (const file of files) {
     const parts = file.path.split("/");
 
-    let current: TreeNode = tree;
+    let current = root;
 
-    for (const part of parts) {
-      if (!current[part]) {
-        current[part] = {};
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const isLast = i === parts.length - 1;
+
+      if (!current.children[part]) {
+        current.children[part] = {
+          name: part,
+          type: isLast ? "file" : "folder",
+          children: {},
+        };
       }
 
-      current = current[part] as TreeNode;
-    }
+      current = current.children[part];
 
-    current.__summary = file.summary;
+      if (isLast) {
+        current.summary = file.summary;
+      }
+    }
   }
 
-  return tree;
+  return root;
 }

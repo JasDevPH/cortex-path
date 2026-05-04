@@ -1,5 +1,3 @@
-// lib/generate-flow.ts
-
 import {
   MarkerType,
   type Edge,
@@ -23,47 +21,41 @@ export function generateFlow(tree: TreeNode): FlowResult {
     depth = 0,
     y = 0
   ) {
+    const nodeId = parentId
+      ? `${parentId}/${node.name}`
+      : node.name;
+
+    nodes.push({
+      id: nodeId,
+      position: {
+        x: depth * 250,
+        y,
+      },
+      data: {
+        name: node.name,
+        summary: node.summary,
+      },
+      type: "fileNode",
+    });
+
+    if (parentId) {
+      edges.push({
+        id: `${parentId}-${nodeId}`,
+        source: parentId,
+        target: nodeId,
+        type: "smoothstep",
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+        },
+      });
+    }
+
     let index = 0;
 
-    for (const [key, value] of Object.entries(node)) {
-      if (key === "__summary") continue;
-
-      const id = parentId
-        ? `${parentId}/${key}`
-        : key;
-
-      const child = value as TreeNode;
-
-      nodes.push({
-        id,
-        position: {
-          x: depth * 250,
-          y: y + index * 120,
-        },
-        data: {
-          name: key,
-          summary: child.__summary,
-        },
-        type: "fileNode",
-      });
-
-      if (parentId) {
-        edges.push({
-            id: `${parentId}-${id}`,
-            source: parentId,
-            target: id,
-
-            type: "smoothstep",
-
-            markerEnd: {
-                type: MarkerType.ArrowClosed,
-            },
-        });
-      }
-
+    for (const child of Object.values(node.children)) {
       traverse(
         child,
-        id,
+        nodeId,
         depth + 1,
         y + index * 120
       );
@@ -74,8 +66,5 @@ export function generateFlow(tree: TreeNode): FlowResult {
 
   traverse(tree);
 
-  return {
-    nodes,
-    edges,
-  };
+  return { nodes, edges };
 }
