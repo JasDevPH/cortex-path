@@ -99,7 +99,7 @@ export default function FileMap() {
       hidden: hidden.has(n.id),
       data: {
         ...n.data,
-        open: openNodes[n.id],
+        open: openNodes[n.id] ?? true,
         toggle: toggleNode,
       },
     }));
