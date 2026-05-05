@@ -23,7 +23,7 @@ export default function LinkFileNode({ id, data }: Props) {
   const folder = !file;
 
   const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    // e.stopPropagation();
 
     data.toggle?.(id);
   };

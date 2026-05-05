@@ -24,7 +24,7 @@ export default function FileNode({ id, data }: FileNodeProps) {
   return (
     <div
       onClick={(e) => {
-        e.stopPropagation();
+        // e.stopPropagation();
         data.toggle?.(id);
       }}
       className="relative rounded-2xl border border-zinc-700 bg-zinc-900 p-4 w-64 shadow-lg cursor-pointer break-words"

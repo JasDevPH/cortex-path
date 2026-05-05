@@ -71,6 +71,8 @@ export default function FileMap({
     Record<string, boolean>
   >({});
 
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+
   // CLIENT ONLY GRAPH GENERATION
   useEffect(() => {
     const tree = buildTree(files);
@@ -137,6 +139,27 @@ export default function FileMap({
     []
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onNodeClick = useCallback((_: any, node: Node) => {
+    const blastIds = getDescendants(node.id, edges);
+
+    const label =
+      blastIds.size === 0
+        ? `${node.data.name} — no dependents`
+        : `blast radius: ${blastIds.size} file${
+            blastIds.size > 1 ? "s" : ""
+          } depend on ${node.data.name}`;
+    console.log("LABEL:", label);
+
+    setSelectedNode({
+      ...node,
+      data: {
+        ...node.data,
+        label,
+      },
+    });
+  }, [edges]);
+
   // PREVENT SSR HYDRATION
   // if (!mounted) {
   //   return null;
@@ -169,10 +192,17 @@ export default function FileMap({
 
   return (
     <div className="w-full h-screen">
+      {selectedNode && (
+        <div className="absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded border border-teal-900/60 bg-zinc-900/90 px-4 py-1.5 font-mono text-xs text-teal-300 backdrop-blur">
+           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {String((selectedNode.data as any).label)}
+        </div>
+      )}
       <ReactFlow
         nodes={filteredNodes}
         edges={edges}
         onNodesChange={onNodesChange}
+        onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
         fitView
       >

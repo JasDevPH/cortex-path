@@ -42,7 +42,7 @@ export default async function MapPage() {
         <span className="font-mono text-xs text-zinc-600">/ architecture-map</span>
         <nav className="ml-auto flex items-center gap-4">
           <Link
-            href="/"
+            href="/app"
             className="flex items-center gap-1.5 font-mono text-xs text-zinc-500 transition-colors hover:text-teal-400"
           >
             <ArrowLeft size={11} />
