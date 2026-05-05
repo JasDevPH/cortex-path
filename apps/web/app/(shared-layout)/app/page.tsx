@@ -22,7 +22,7 @@ export default function Home() {
   const handleFileSelect = (file: FileResult) => {
     setSelectedFile(file);
     const content = getContent(file.path);
-    interpret(file.name, content || file.summary || '', file.path);
+    interpret(file.name, content || file.summary || '', file.path, file.logicSummary);
   };
 
   const header = (

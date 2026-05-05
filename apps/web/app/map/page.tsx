@@ -44,7 +44,7 @@ export default async function MapPage() {
         </span>
         <nav className="ml-auto flex items-center gap-4">
           <Link
-            href="/"
+            href="/app"
             className="flex items-center gap-1.5 font-mono text-xs text-cx-text-3 transition-colors hover:text-cx-accent"
           >
             <ArrowLeft size={11} />

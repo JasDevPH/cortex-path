@@ -18,6 +18,7 @@ export function useInterpret() {
     fileName: string,
     codeSnippet: string,
     filePath: string,
+    savedLogicSummary?: string | null,
   ) => {
     // Need at least a path or code to call the API meaningfully
     if (!filePath && !codeSnippet.trim()) return;
@@ -40,7 +41,15 @@ export function useInterpret() {
         return;
       }
     } catch {
-      // localStorage unavailable — fall through to API
+      // localStorage unavailable — fall through
+    }
+
+    // 3. DB-persisted logicSummary (after page reload, before local cache warms)
+    if (savedLogicSummary) {
+      setSummary(savedLogicSummary);
+      queryClient.setQueryData(cacheKey, savedLogicSummary);
+      try { localStorage.setItem(lsKey(filePath), savedLogicSummary); } catch { /* ignore */ }
+      return;
     }
 
     // 3. Stream from API (first time only)

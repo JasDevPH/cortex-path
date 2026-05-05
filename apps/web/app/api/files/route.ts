@@ -5,7 +5,7 @@ import { getSessionFromHeaders, getSessionFromRequest } from '@/lib/get-session'
 export const runtime = 'nodejs';
 export const dynamic = "force-dynamic";
 
-type FileRow = { name: string; path: string; summary: string | null; imports: string[]; exports: string[]; content: string | null };
+type FileRow = { name: string; path: string; summary: string | null; logicSummary: string | null; imports: string[]; exports: string[]; content: string | null };
 
 export async function GET() {
   try {
@@ -13,7 +13,7 @@ export async function GET() {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const files = await prisma.$queryRaw<FileRow[]>`
-      SELECT name, path, summary, imports, exports, content
+      SELECT name, path, summary, "logicSummary", imports, exports, content
       FROM "File"
       WHERE "userId" = ${session.user.id}
       ORDER BY "updatedAt" DESC
@@ -35,7 +35,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'path and interpretation required' }, { status: 400 });
     }
     await prisma.$executeRaw`
-      UPDATE "File" SET summary = ${interpretation}, "updatedAt" = NOW()
+      UPDATE "File" SET "logicSummary" = ${interpretation}, "updatedAt" = NOW()
       WHERE path = ${path} AND "userId" = ${session.user.id}
     `;
     return NextResponse.json({ ok: true });

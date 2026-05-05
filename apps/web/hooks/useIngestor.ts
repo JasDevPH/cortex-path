@@ -8,6 +8,7 @@ export type FileResult = {
   name: string;
   path: string;
   summary: string | null;
+  logicSummary?: string | null;
   imports: string[];
   exports: string[];
   content?: string | null;
