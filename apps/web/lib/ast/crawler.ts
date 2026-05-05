@@ -7,5 +7,8 @@ export const initCortexParser = (fileContent: string, filePath: string) => {
   const imports = sourceFile
     .getImportDeclarations()
     .map((imp) => imp.getModuleSpecifierValue());
-  return { imports };
+
+  const exports = [...sourceFile.getExportedDeclarations().keys()];
+
+  return { imports, exports };
 };

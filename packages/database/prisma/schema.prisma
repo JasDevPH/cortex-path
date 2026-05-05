@@ -78,3 +78,31 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model File {
+  id        String   @id @default(cuid())
+  path      String   @unique
+  userId    String?
+  name      String
+  ext       String
+  imports   String[]
+  exports   String[]
+  summary   String?
+  content   String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model SavedPrompt {
+  id        String   @id @default(cuid())
+  filePath  String   @unique
+  userId    String?
+  fileName  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}

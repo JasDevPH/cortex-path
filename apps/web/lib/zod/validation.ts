@@ -1,13 +1,13 @@
 import * as z from 'zod'
  
 export const SignupFormSchema = z.object({
-    name: z   
+    name: z
         .string()
         .min(2, { error: 'Name must be at least 2 characters long.' })
         .trim(),
     username: z
         .string()
-        .min(2, { error: 'Name must be at least 2 characters long.' })
+        .min(2, { error: 'Username must be at least 2 characters long.' })
         .trim(),
     email: z.email({ error: 'Please enter a valid email.' }).trim(),
     password: z
@@ -19,6 +19,10 @@ export const SignupFormSchema = z.object({
         error: 'Contain at least one special character.',
         })
         .trim(),
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
 })
 
 export const SignInFormSchema = z.object({

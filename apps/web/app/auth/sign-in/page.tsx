@@ -45,7 +45,7 @@ export default function SignInPage({ onClose }: SignInPageProps){
                     }
 
                     const url =
-                    res.role === "admin" ? "/" : "/";
+                    res.role === "admin" ? "/app" : "/app";
 
                     router.push(url);
                     router.refresh();

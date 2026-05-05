@@ -2,27 +2,91 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Enable class-based dark mode for Tailwind v4 dark: prefix */
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #09090b;
+
+  /* Base palette */
+  --cx-teal: #0d9488;
+  --cx-lime: #65a30d;
+  --cx-surface: #f0f0f1;
+  --cx-border: #e4e4e7;
+  --cx-muted: #52525b;
+
+  /* Accent spectrum — darker for legibility on white */
+  --cx-accent:        #0f766e;
+  --cx-accent-hover:  #0d9488;
+  --cx-accent-muted:  #0d9488;
+  --cx-accent-bg:     #f0fdfa;
+  --cx-accent-border: #99f6e4;
+
+  /* Card / surface hierarchy */
+  --cx-card:          #ffffff;
+  --cx-card-raised:   #f8fafc;
+  --cx-card-border:   #e2e8f0;
+
+  /* Text hierarchy */
+  --cx-text-2:        #374151;
+  --cx-text-3:        #6b7280;
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+
+  /* Base palette */
+  --cx-teal: #2DD4BF;
+  --cx-lime: #a3e635;
+  --cx-surface: #18181b;
+  --cx-border: #27272a;
+  --cx-muted: #71717a;
+
+  /* Accent spectrum */
+  --cx-accent:        #2dd4bf;
+  --cx-accent-hover:  #5eead4;
+  --cx-accent-muted:  #14b8a6;
+  --cx-accent-bg:     rgba(20,184,166,0.08);
+  --cx-accent-border: #134e4a;
+
+  /* Card / surface hierarchy */
+  --cx-card:          #18181b;
+  --cx-card-raised:   #27272a;
+  --cx-card-border:   #3f3f46;
+
+  /* Text hierarchy */
+  --cx-text-2:        #a1a1aa;
+  --cx-text-3:        #71717a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-cx-surface: var(--cx-surface);
+  --color-cx-border: var(--cx-border);
+  --color-cx-muted: var(--cx-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+  --color-cx-teal: var(--cx-teal);
+  --color-cx-lime: var(--cx-lime);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Semantic tokens */
+  --color-cx-accent:        var(--cx-accent);
+  --color-cx-accent-hover:  var(--cx-accent-hover);
+  --color-cx-accent-muted:  var(--cx-accent-muted);
+  --color-cx-accent-bg:     var(--cx-accent-bg);
+  --color-cx-accent-border: var(--cx-accent-border);
+  --color-cx-card:          var(--cx-card);
+  --color-cx-card-raised:   var(--cx-card-raised);
+  --color-cx-card-border:   var(--cx-card-border);
+  --color-cx-text-2:        var(--cx-text-2);
+  --color-cx-text-3:        var(--cx-text-3);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
