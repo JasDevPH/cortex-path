@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button, buttonVariants } from "./button";
-// import { ThemeToggle } from "./ui/theme-toggle";
+import { ThemeToggle } from "./theme-toggle";
 import SignInPage from "@/app/auth/sign-in/page";
 import { useState } from "react";
 
@@ -29,7 +29,7 @@ export function Navbar() {
                 <div className="flex items-center gap-2">
                     {/* <Link className={buttonVariants({variant: "ghost"})} href="/">About</Link> */}
                     {/* <Link className={buttonVariants({variant: "ghost"})} href="/">Create</Link> */}
-                    {/* <ThemeToggle /> */}
+                    <ThemeToggle />
                 </div>
             </div>
 

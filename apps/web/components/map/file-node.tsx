@@ -2,6 +2,7 @@
 
 import { Handle, Position } from "@xyflow/react";
 import { Folder, File, ChevronDown, ChevronRight } from "lucide-react";
+import { useTheme } from "next-themes";
 
 type FileNodeProps = {
   id: string;
@@ -19,6 +20,8 @@ const isFile = (name: string) =>
 export default function FileNode({ id, data }: FileNodeProps) {
   const file = isFile(data.name);
   const folder = !file;
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === "light" || resolvedTheme === "system";
 
   return (
     <div
@@ -26,17 +29,17 @@ export default function FileNode({ id, data }: FileNodeProps) {
         e.stopPropagation();
         data.toggle?.(id);
       }}
-      className="relative rounded-2xl border border-zinc-700 bg-zinc-900 p-4 w-64 shadow-lg cursor-pointer break-words"
+      className="relative rounded-2xl border border-zinc-700 bg-zinc-900 dark:bg-zinc-100 p-4 w-64 shadow-lg cursor-pointer break-words"
     >
       <Handle type="target" position={Position.Top} />
 
       {/* header */}
-      <div className="flex items-start gap-2 text-white font-semibold break-words">
+      <div className="flex items-start gap-2 text-white dark:text-zinc-900 font-semibold break-words">
         
         {folder ? (
-          <Folder size={16} className="text-yellow-400 mt-0.5 shrink-0" />
+          <Folder size={16} className="text-yellow-400 fill-none dark:fill-yellow-400 mt-0.5 shrink-0" />
         ) : (
-          <File size={16} className="text-blue-400 mt-0.5 shrink-0" />
+          <File size={16} className="text-blue-400 fill-none dark:fill-blue-400 mt-0.5 shrink-0" />
         )}
 
         {/* name */}
@@ -57,7 +60,7 @@ export default function FileNode({ id, data }: FileNodeProps) {
 
       {/* summary */}
       {data.open && data.summary && (
-        <div className="text-sm text-zinc-400 mt-2 break-words">
+        <div className="text-sm text-zinc-400 dark:text-zinc-500 mt-2 break-words">
           {data.summary}
         </div>
       )}
