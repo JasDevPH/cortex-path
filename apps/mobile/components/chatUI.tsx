@@ -1,6 +1,8 @@
-import { MoreHorizontal, Send, User } from 'lucide-react-native';
+import { MoreHorizontal, Send, User, LogOut } from 'lucide-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { signOut } from '../lib/api';
+import { Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View, Modal } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDebounce } from '../hooks/useDebounce';
 
@@ -12,14 +14,31 @@ export default function ChatUI() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
+  const router = useRouter();
+
+  const [isSignOutModalVisible, setIsSignOutModalVisible] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (e) {
+      console.log('Failed to sign out via API', e);
+    } finally {
+      router.replace('/');
+    }
+  };
+
+  const confirmSignOut = () => {
+    setIsSignOutModalVisible(true);
+  };
 
   useEffect(() => {
     const showSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      Platform.OS === 'ios' || Platform.OS === 'android'? 'keyboardWillShow' : 'keyboardDidShow',
       () => setKeyboardVisible(true)
     );
     const hideSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      Platform.OS === 'ios' || Platform.OS === 'android'? 'keyboardWillHide' : 'keyboardDidHide',
       () => setKeyboardVisible(false)
     );
     return () => {
@@ -76,6 +95,9 @@ export default function ChatUI() {
                 <Text className="text-slate-900 font-bold text-lg tracking-tight">ContextPath</Text>
               </View>
             </View>
+            <TouchableOpacity onPress={confirmSignOut} className="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 items-center justify-center">
+              <LogOut size={18} color="#64748b" style={{ marginLeft: -2 }} />
+            </TouchableOpacity>
           </View>
         )}
 
@@ -161,6 +183,41 @@ export default function ChatUI() {
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      <Modal
+        visible={isSignOutModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsSignOutModalVisible(false)}
+      >
+        <View className="flex-1 justify-center items-center bg-black/40 px-6">
+          <View className="bg-white w-full rounded-[24px] p-6 shadow-xl" style={{ maxWidth: 320 }}>
+            <Text className="text-xl font-bold text-slate-900 mb-2 text-center">Log Out</Text>
+            <Text className="text-base text-slate-500 mb-6 text-center">Are you sure you want to log out?</Text>
+            
+            <View className="flex-row justify-between" style={{ gap: 12 }}>
+              <TouchableOpacity 
+                className="flex-1 py-3.5 rounded-2xl bg-slate-100"
+                onPress={() => setIsSignOutModalVisible(false)}
+                activeOpacity={0.7}
+              >
+                <Text className="text-slate-700 text-center font-semibold text-base">Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                className="flex-1 py-3.5 rounded-2xl bg-red-500"
+                onPress={() => {
+                  setIsSignOutModalVisible(false);
+                  handleSignOut();
+                }}
+                activeOpacity={0.7}
+              >
+                <Text className="text-white text-center font-semibold text-base">Log Out</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

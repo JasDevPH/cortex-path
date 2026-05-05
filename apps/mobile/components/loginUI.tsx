@@ -8,17 +8,16 @@ export default function LoginUI() {
     const [mode, setMode] = useState<'login' | 'signup'>('login');
     const { width, height } = useWindowDimensions();
     
-    // Scale blobs based on screen size
     const blobSize = Math.min(width, height) * 0.9;
 
     return (
         <KeyboardAvoidingView 
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === "ios" || Platform.OS === "android"? "padding" : "height"}
             className="flex-1 bg-white"
         >
-            {/* Top Blob Design */}
+           
             <View 
-                className="absolute bg-amber-400 rounded-full opacity-80" 
+                className="absolute bg-blue-400 rounded-full opacity-80" 
                 style={{ 
                     width: blobSize, 
                     height: blobSize, 
@@ -35,14 +34,13 @@ export default function LoginUI() {
             >
                 <View className="flex-1 justify-center">
                     {mode === 'login' ? (
-                        <SignIn onSignUpPress={() => setMode('signup')} />
+                        <SignIn />
                     ) : (
                         <SignUp onSignInPress={() => setMode('login')} />
                     )}
                 </View>
             </ScrollView>
 
-            {/* Bottom Navigation Link */}
             <View className="pb-10 items-center z-10">
                 <TouchableOpacity 
                     onPress={() => setMode(mode === 'login' ? 'signup' : 'login')}
@@ -50,25 +48,14 @@ export default function LoginUI() {
                 >
                     <Text className="text-black font-bold text-sm text-center">
                         {mode === 'login' ? "Don't have an account? " : "Already have an account? "}
-                        <Text className="text-amber-500 font-bold">
+                        <Text className="text-blue-500 font-bold">
                             {mode === 'login' ? 'Sign up' : 'Login'}
                         </Text>
                     </Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Bottom Blob Design */}
-            <View 
-                className="absolute bg-amber-400 rounded-full opacity-80" 
-                style={{ 
-                    width: blobSize, 
-                    height: blobSize, 
-                    bottom: -blobSize * 0.3, 
-                    left: -blobSize * 0.3,
-                    transform: [{ rotate: '45deg' }],
-                    zIndex: -1
-                }}
-            />
+           
         </KeyboardAvoidingView>
     );
 }
