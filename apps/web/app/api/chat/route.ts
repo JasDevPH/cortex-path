@@ -5,6 +5,7 @@ import { streamText } from 'ai';
 import { getSessionFromRequest } from '@/lib/get-session';
 
 export const runtime = 'nodejs';
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {

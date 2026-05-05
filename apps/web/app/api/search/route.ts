@@ -2,6 +2,7 @@ import { prisma } from "@cortexpath/database";
 import { getSessionFromRequest } from "@/lib/get-session";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 type FileRow = {
   id: string;

@@ -2,6 +2,7 @@ import { prisma } from "@cortexpath/database";
 import { getSessionFromHeaders } from "@/lib/get-session";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 type GraphFile = { id: string; path: string; name: string; summary: string | null; imports: string[] };
 

@@ -4,6 +4,7 @@ import { streamText } from "ai";
 import { getSessionFromRequest } from "@/lib/get-session";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const SYSTEM_PROMPT = `You are the CortexPath Lead AI Engineer. You have been given the REAL code, file path, imports, exports, and dependency graph for a file in this project. Use all of this information to produce a highly accurate, personalized analysis. Do NOT make assumptions — derive every insight directly from the actual code and metadata provided.
 

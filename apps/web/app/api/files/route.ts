@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { getSessionFromHeaders, getSessionFromRequest } from '@/lib/get-session';
 
 export const runtime = 'nodejs';
+export const dynamic = "force-dynamic";
 
 type FileRow = { name: string; path: string; summary: string | null; imports: string[]; exports: string[]; content: string | null };
 

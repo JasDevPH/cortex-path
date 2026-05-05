@@ -7,6 +7,7 @@ import path from "path";
 import { getSessionFromRequest } from "@/lib/get-session";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 type IngestFile = {
   filePath: string;
