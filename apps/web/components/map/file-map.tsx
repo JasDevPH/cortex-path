@@ -5,7 +5,7 @@ import {
   ReactFlow,
   Background,
   applyNodeChanges,
-  NodeChange
+  NodeChange,
 } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
@@ -15,7 +15,13 @@ import FileNode from "./file-node";
 import { buildTree } from "@/lib/build-tree";
 import { generateFlow } from "@/lib/generate-flow";
 import { layoutGraph } from "@/lib/layout-graph";
+
 import type { Edge } from "@xyflow/react";
+
+export type FileRecord = {
+  path: string;
+  summary: string;
+};
 
 const nodeTypes = {
   fileNode: FileNode,
@@ -38,35 +44,11 @@ function getDescendants(nodeId: string, edges: Edge[]) {
   return result;
 }
 
-export default function FileMap() {
-  const files = [
-    {
-      path: "project/app/page.tsx",
-      summary: "Main page",
-    },
-    {
-      path: "project/components/ui/navbar.tsx",
-      summary: "Navbar component",
-    },
-    {
-      path: "project/components/ui/nsr.tsx",
-      summary: "Navbar component",
-    },
-    {
-      path: "project/components/ui/ns2r.tsx",
-      summary: "Navbar component",
-    },
-    {
-      path: "project/components/ui/nsasdfasdfasdfasdfasdfasdfasdr.tsx",
-      summary: "Navbar componenslkajsdflkasjdflkasfjlkasjdflajsdfaslkdfjasljfkasdlf",
-    },
-    {
-      path: "project/components/ui/ns3r.tsx",
-      summary: "Navbar component",
-    },
-  ];
+type FileMapProps = {
+  files: FileRecord[];
+};
 
-  // initial graph
+export default function FileMap({ files }: FileMapProps) {
   const initial = useMemo(() => {
     const tree = buildTree(files);
     const flow = generateFlow(tree);
