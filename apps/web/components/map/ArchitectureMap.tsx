@@ -11,7 +11,7 @@ import ReactFlow, {
   NodeMouseHandler,
   BackgroundVariant,
 } from 'reactflow';
-import 'reactflow/dist/style.css';
+
 import { FileNode } from './FileNode';
 
 const nodeTypes = { fileNode: FileNode };
