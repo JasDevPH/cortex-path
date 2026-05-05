@@ -83,7 +83,7 @@ export async function POST(req: Request) {
           imports = fileRows[0].imports ?? [];
           exports = fileRows[0].exports ?? [];
         }
-        impactedBy = rippleRows.map(r => r.path);
+        impactedBy = rippleRows.map((r: { path: string }) => r.path);
       } catch {
         // DB lookup failed — proceed without metadata
       }
