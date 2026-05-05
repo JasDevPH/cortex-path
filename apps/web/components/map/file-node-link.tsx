@@ -2,7 +2,7 @@
 
 import { Handle, Position } from "@xyflow/react";
 import { Folder, File, ChevronDown, ChevronRight } from "lucide-react";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 type Props = {
   id: string;
@@ -25,11 +25,6 @@ export default function LinkFileNode({ id, data }: Props) {
     e.stopPropagation();
 
     data.toggle?.(id);
-
-    if (data.url) {
-    //   window.open(data.url, "_blank");
-      redirect(data.url);
-    }
   };
 
   return (
@@ -55,27 +50,27 @@ export default function LinkFileNode({ id, data }: Props) {
           </div>
         </div>
 
-        {/* <div className="text-zinc-400 mt-0.5 shrink-0">
+        <div className="text-zinc-400 mt-0.5 shrink-0">
             {data.open ? (
                 <ChevronDown size={16} />
             ) : (
                 <ChevronRight size={16} />
             )}
-        </div> */}
+        </div>
       </div>
 
       {/* summary */}
       {data.open && data.summary && (
         <div className="text-sm text-zinc-400 dark:text-zinc-500 mt-2 break-words">
-          {data.summary}
+          {/* {data.summary} */}
+          {data.url && (
+            <div className="text-xs text-blue-400 mt-2 underline">
+              <Link href={data.url}>{data.summary}</Link>
+            </div>
+          )}
         </div>
       )}
 
-      {data.url && (
-        <div className="text-xs text-blue-400 mt-2 underline">
-          Open link →
-        </div>
-      )}
 
       <Handle type="source" position={Position.Bottom} />
     </div>

@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 
-export default function AuthLayout({children}: Readonly<{children: ReactNode}>){
+export default function AuthLayout({children, modal}: Readonly<{children: ReactNode; modal: ReactNode;}>){
     return (
         <div className="min-h-screen flex items-center justify-center">
             <div className="absolute top-5 left-5">
@@ -13,7 +13,10 @@ export default function AuthLayout({children}: Readonly<{children: ReactNode}>){
                 </Link>
             </div>
 
-            <div className="w-full max-w-md mx-auto">{children}</div>
+            <div className="w-full max-w-md mx-auto">
+                {children}
+                {modal}    
+            </div>
         </div>
     )
 }

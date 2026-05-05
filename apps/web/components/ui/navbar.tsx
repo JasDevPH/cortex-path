@@ -1,22 +1,10 @@
 "use client"
 
 import Link from "next/link";
-import { Button, buttonVariants } from "./button";
+import { buttonVariants } from "./button";
 import { ThemeToggle } from "./theme-toggle";
-import SignInPage from "@/app/auth/sign-in/page";
-import { useState } from "react";
 
 export function Navbar() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    function openModal() {
-        setIsModalOpen(true);
-    }
-
-    function closeModal() {
-        setIsModalOpen(false);
-    }
-
     return (
         <nav className="w-full p-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-8">
@@ -35,11 +23,8 @@ export function Navbar() {
 
             <div className="flex items-center gap-2">
                 <Link className={buttonVariants()} href="/auth/sign-up">Sign up</Link>
-                {/* <Link className={buttonVariants({variant: "secondary"})} href="/auth/sign-in">Login</Link> */}
-                <Button className={buttonVariants({variant: "secondary"})} onClick={openModal}>Login</Button>
+                <Link className={buttonVariants({variant: "secondary"})} href="/auth/sign-in">Login</Link>
             </div>
-
-            {isModalOpen && <SignInPage onClose={closeModal} />}
         </nav>
     )
 }

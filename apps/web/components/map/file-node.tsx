@@ -2,7 +2,6 @@
 
 import { Handle, Position } from "@xyflow/react";
 import { Folder, File, ChevronDown, ChevronRight } from "lucide-react";
-import { useTheme } from "next-themes";
 
 type FileNodeProps = {
   id: string;
@@ -20,8 +19,6 @@ const isFile = (name: string) =>
 export default function FileNode({ id, data }: FileNodeProps) {
   const file = isFile(data.name);
   const folder = !file;
-  const { resolvedTheme } = useTheme();
-  const isLight = resolvedTheme === "light" || resolvedTheme === "system";
 
   return (
     <div

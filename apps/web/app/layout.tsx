@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { ConfirmProvider } from "@/components/ui/confirm-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,8 +23,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <html
@@ -37,7 +41,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ConfirmProvider>
+            {children}
+            {modal}
+          </ConfirmProvider>
           <Toaster position="bottom-left" richColors theme="system" />
         </ThemeProvider>
       </body>
