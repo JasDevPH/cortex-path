@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,38 +10,35 @@ datasource db {
 model User {
   id              String    @id
   name            String
-  email           String
+  email           String    @unique
   emailVerified   Boolean   @default(false)
   image           String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-  username        String?
+  username        String?   @unique
   displayUsername String?
   role            String?
   banned          Boolean?  @default(false)
   banReason       String?
   banExpires      DateTime?
-  sessions        Session[]
   accounts        Account[]
+  sessions        Session[]
 
-  @@unique([email])
-  @@unique([username])
   @@map("user")
 }
 
 model Session {
   id             String   @id
   expiresAt      DateTime
-  token          String
+  token          String   @unique
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   ipAddress      String?
   userAgent      String?
   userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   impersonatedBy String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@index([userId])
   @@map("session")
 }
@@ -52,7 +48,6 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -62,6 +57,7 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("account")
@@ -80,17 +76,18 @@ model Verification {
 }
 
 model File {
-  id        String   @id @default(cuid())
-  path      String   @unique
-  userId    String?
+  id        String                 @id @default(cuid())
+  path      String                 @unique
   name      String
   ext       String
   imports   String[]
   exports   String[]
   summary   String?
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+  userId    String?
+  embedding Unsupported("vector")?
   content   String?
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
 
   @@index([userId])
 }
@@ -98,11 +95,11 @@ model File {
 model SavedPrompt {
   id        String   @id @default(cuid())
   filePath  String   @unique
-  userId    String?
   fileName  String
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String?
 
   @@index([userId])
 }

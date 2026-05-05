@@ -1,9 +1,33 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { ArchitectureMap } from '@/components/map/MapClientWrapper';
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { ArchitectureMap } from "@/components/map/MapClientWrapper";
+import { getSessionFromHeaders } from "@/lib/get-session";
+import { prisma } from "@cortexpath/database";
+import FileMap, { FileRecord } from "@/components/map/file-map";
 
-export default function MapPage() {
+export default async function MapPage() {
+  const session = await getSessionFromHeaders();
+
+  if (!session) {
+    return <div>Unauthorized</div>;
+  }
+
+  const dbFiles = await prisma.file.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    select: {
+      path: true,
+      summary: true,
+    },
+  });
+
+  const files: FileRecord[] = dbFiles.map((file) => ({
+    path: file.path,
+    summary: file.summary ?? undefined,
+  }));
+
   return (
     <div className="flex h-screen flex-col bg-background text-foreground">
       <header className="flex items-center gap-3 border-b border-cx-card-border px-6 py-2">
@@ -15,7 +39,9 @@ export default function MapPage() {
           className="h-8 w-auto rounded"
           priority
         />
-        <span className="font-mono text-xs text-cx-text-3">/ architecture-map</span>
+        <span className="font-mono text-xs text-cx-text-3">
+          / architecture-map
+        </span>
         <nav className="ml-auto flex items-center gap-4">
           <Link
             href="/"
@@ -30,7 +56,8 @@ export default function MapPage() {
         </span>
       </header>
       <div className="flex-1 overflow-hidden">
-        <ArchitectureMap />
+        {/* <ArchitectureMap /> */}
+        <FileMap files={files} />
       </div>
     </div>
   );
