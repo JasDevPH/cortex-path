@@ -1,11 +1,19 @@
 "use client";
 
-import { useCallback, useState, useMemo } from "react";
+import {
+  useCallback,
+  useState,
+  useMemo,
+  useEffect,
+} from "react";
+
 import {
   ReactFlow,
   Background,
   applyNodeChanges,
   NodeChange,
+  type Edge,
+  type Node,
 } from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
@@ -17,12 +25,14 @@ import { buildTree } from "@/lib/build-tree";
 import { generateFlow } from "@/lib/generate-flow";
 import { layoutGraph } from "@/lib/layout-graph";
 
-import type { Edge } from "@xyflow/react";
-
 export type FileRecord = {
   path: string;
   summary?: string;
   url?: string;
+};
+
+type FileMapProps = {
+  files: FileRecord[];
 };
 
 const nodeTypes = {
@@ -47,20 +57,35 @@ function getDescendants(nodeId: string, edges: Edge[]) {
   return result;
 }
 
-type FileMapProps = {
-  files: FileRecord[];
-};
+export default function FileMap({
+  files,
+}: FileMapProps) {
+  const [mounted, setMounted] = useState(false);
 
-export default function FileMap({ files }: FileMapProps) {
-  const initial = useMemo(() => {
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+
+  const [openNodes, setOpenNodes] = useState<
+    Record<string, boolean>
+  >({});
+
+  // CLIENT ONLY GRAPH GENERATION
+  useEffect(() => {
     const tree = buildTree(files);
-    const flow = generateFlow(tree);
-    return layoutGraph(flow.nodes, flow.edges);
-  }, [files]);
 
-  const [nodes, setNodes] = useState(initial.nodes);
-  const [edges] = useState(initial.edges);
-  const [openNodes, setOpenNodes] = useState<Record<string, boolean>>({});
+    const flow = generateFlow(tree);
+
+    const layouted = layoutGraph(
+      flow.nodes,
+      flow.edges
+    );
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNodes(layouted.nodes);
+    setEdges(layouted.edges);
+
+    setMounted(true);
+  }, [files]);
 
   const toggleNode = (id: string) => {
     setOpenNodes((prev) => ({
@@ -72,19 +97,31 @@ export default function FileMap({ files }: FileMapProps) {
   const filteredNodes = useMemo(() => {
     const hidden = new Set<string>();
 
-    for (const [id, isOpen] of Object.entries(openNodes)) {
+    for (const [id, isOpen] of Object.entries(
+      openNodes
+    )) {
       if (!isOpen) {
-        const descendants = getDescendants(id, edges);
-        descendants.forEach((d) => hidden.add(d));
+        const descendants = getDescendants(
+          id,
+          edges
+        );
+
+        descendants.forEach((d) =>
+          hidden.add(d)
+        );
       }
     }
 
     return nodes.map((n) => ({
       ...n,
+
       hidden: hidden.has(n.id),
+
       data: {
         ...n.data,
+
         open: openNodes[n.id] ?? true,
+
         toggle: toggleNode,
       },
     }));
@@ -92,9 +129,16 @@ export default function FileMap({ files }: FileMapProps) {
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds)),
+      setNodes((nds) =>
+        applyNodeChanges(changes, nds)
+      ),
     []
   );
+
+  // PREVENT SSR HYDRATION
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="w-full h-screen">
