@@ -8,6 +8,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model File {
+  id        String                 @id
+  path      String                 @unique
+  name      String
+  ext       String
+  imports   String[]
+  exports   String[]
+  summary   String?
+  embedding Unsupported("vector")?
+  createdAt DateTime               @default(now())
+  updatedAt DateTime
+}
+
+model SavedPrompt {
+  id        String   @id
+  filePath  String   @unique
+  fileName  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
 model User {
   id              String    @id
   name            String
