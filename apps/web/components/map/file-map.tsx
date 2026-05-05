@@ -11,6 +11,7 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import FileNode from "./file-node";
+import LinkFileNode from "./file-node-link";
 
 import { buildTree } from "@/lib/build-tree";
 import { generateFlow } from "@/lib/generate-flow";
@@ -20,11 +21,13 @@ import type { Edge } from "@xyflow/react";
 
 export type FileRecord = {
   path: string;
-  summary: string;
+  summary?: string;
+  url?: string;
 };
 
 const nodeTypes = {
   fileNode: FileNode,
+  linkFileNode: LinkFileNode,
 };
 
 function getDescendants(nodeId: string, edges: Edge[]) {

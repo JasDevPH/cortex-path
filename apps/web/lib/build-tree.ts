@@ -1,12 +1,14 @@
 export type FileRecord = {
   path: string;
-  summary: string;
+  summary?: string;
+  url?: string;
 };
 
 export type TreeNode = {
   name: string;
   type: "file" | "folder";
   summary?: string;
+  url?: string;
   children: Record<string, TreeNode>;
 };
 
@@ -38,9 +40,10 @@ export function buildTree(files: FileRecord[]) {
 
       if (isLast) {
         current.summary = file.summary;
+        current.url = file.url;
       }
     }
   }
 
-  return root;
+  return root.children;
 }

@@ -11,7 +11,7 @@ type FlowResult = {
   edges: Edge[];
 };
 
-export function generateFlow(tree: TreeNode): FlowResult {
+export function generateFlow(tree: Record<string, TreeNode>): FlowResult {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
@@ -34,8 +34,9 @@ export function generateFlow(tree: TreeNode): FlowResult {
       data: {
         name: node.name,
         summary: node.summary,
+        url: node.url,
       },
-      type: "fileNode",
+      type: node.url ? "linkFileNode" : "fileNode",
     });
 
     if (parentId) {
@@ -53,18 +54,15 @@ export function generateFlow(tree: TreeNode): FlowResult {
     let index = 0;
 
     for (const child of Object.values(node.children)) {
-      traverse(
-        child,
-        nodeId,
-        depth + 1,
-        y + index * 120
-      );
-
+      traverse(child, nodeId, depth + 1, y + index * 120);
       index++;
     }
   }
 
-  traverse(tree);
+  // 👇 IMPORTANT: multiple roots now
+  for (const rootNode of Object.values(tree)) {
+    traverse(rootNode);
+  }
 
   return { nodes, edges };
 }
