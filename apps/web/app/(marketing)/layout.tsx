@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
+import { redirect } from 'next/navigation';
+import { getSessionFromHeaders } from '@/lib/get-session';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://cortex-path.up.railway.app';
 
@@ -97,7 +99,9 @@ const jsonLd = {
   ],
 };
 
-export default function MarketingLayout({ children }: { children: ReactNode }) {
+export default async function MarketingLayout({ children }: { children: ReactNode }) {
+  const session = await getSessionFromHeaders();
+  if (session?.user) redirect('/app');
   return (
     <>
       <script
