@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState, KeyboardEvent } from 'react';
-import { SendHorizontal, Plus, X, Trash2, MessageSquare, Maximize2, Minimize2, Minus } from 'lucide-react';
+import { SendHorizontal, Clock, Plus, X, Trash2, MessageSquare, Maximize2, Minimize2, Minus } from 'lucide-react';
 import { ChatMessage } from './ChatMessage';
 import { CortexIcon } from './CortexIcon';
 import type { ChatSession } from '@/hooks/useChatSessions';
@@ -11,6 +11,7 @@ type ChatPanelProps = {
   activeId: string;
   activeSession: ChatSession | null;
   isLoading: boolean;
+  isThrottled: boolean;
   isFullView: boolean;
   onSend: (text: string) => void;
   onNewSession: () => void;
@@ -42,6 +43,7 @@ export function ChatPanel({
   activeId,
   activeSession,
   isLoading,
+  isThrottled,
   isFullView,
   onSend,
   onNewSession,
@@ -64,7 +66,7 @@ export function ChatPanel({
 
   const handleSend = () => {
     const text = input.trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading || isThrottled) return;
     onSend(text);
     setInput('');
     // reset textarea height
@@ -254,10 +256,10 @@ export function ChatPanel({
               />
               <button
                 onClick={handleSend}
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || isThrottled || !input.trim()}
                 className="mb-0.5 shrink-0 rounded-lg p-1.5 text-cx-accent transition-colors hover:bg-cx-accent-bg disabled:opacity-30"
               >
-                <SendHorizontal size={14} />
+                {isThrottled ? <Clock size={14} /> : <SendHorizontal size={14} />}
               </button>
             </div>
             <p className="mt-1.5 text-center font-mono text-[9px] text-cx-text-3">

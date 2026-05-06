@@ -57,6 +57,16 @@ export async function POST(req: Request) {
     }
     const userId = session.user.id;
 
+    // Per-minute guard — max 2 logic summaries/minute/user
+    const rlMin = checkRateLimit(userId, 'interpret:min', 2, 60_000);
+    if (!rlMin.allowed) {
+      return new Response(
+        JSON.stringify({ error: 'Please wait before generating another summary.' }),
+        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': '60' } }
+      );
+    }
+
+    // Per-day guard
     const rl = checkRateLimit(userId, 'interpret', 30);
     if (!rl.allowed) {
       return new Response(

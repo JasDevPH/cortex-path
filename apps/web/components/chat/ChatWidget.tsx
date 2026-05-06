@@ -15,6 +15,7 @@ export function ChatWidget() {
     activeId,
     activeSession,
     isLoading,
+    isThrottled,
     send,
     newSession,
     switchSession,
@@ -27,6 +28,7 @@ export function ChatWidget() {
     activeId,
     activeSession,
     isLoading,
+    isThrottled,
     onSend: send,
     onNewSession: newSession,
     onSwitchSession: switchSession,
@@ -40,7 +42,7 @@ export function ChatWidget() {
     <>
       {/* ── Full-view panel — right-side overlay ── */}
       {size === 'full' && (
-        <div className="fixed inset-y-0 right-0 z-50 w-125 shadow-2xl">
+        <div className="fixed inset-y-0 right-0 z-50 w-1/2 shadow-2xl">
           <ChatPanel {...panelProps} isFullView={true} />
         </div>
       )}

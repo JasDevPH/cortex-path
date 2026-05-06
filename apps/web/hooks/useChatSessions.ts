@@ -54,6 +54,7 @@ export function useChatSessions() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeId, setActiveId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isThrottled, setIsThrottled] = useState(false);
   const initialized = useRef(false);
 
   // Hydrate from localStorage on first mount
@@ -111,7 +112,7 @@ export function useChatSessions() {
   }, [activeId]);
 
   const send = useCallback(async (text: string) => {
-    if (!text.trim() || isLoading || !activeId) return;
+    if (!text.trim() || isLoading || isThrottled || !activeId) return;
 
     const capturedSessionId = activeId;
     const userMsg: ChatMessage = { role: 'user', content: text };
@@ -145,7 +146,9 @@ export function useChatSessions() {
 
       if (!res.ok || !res.body) {
         const errText = res.status === 429
-          ? 'Daily chat limit reached. Try again tomorrow.'
+          ? (res.headers.get('Retry-After')
+              ? 'Sending too fast — please wait a moment.'
+              : 'Daily chat limit reached. Try again tomorrow.')
           : 'Something went wrong. Please try again.';
         setSessions(prev => prev.map(s => {
           if (s.id !== capturedSessionId) return s;
@@ -174,14 +177,17 @@ export function useChatSessions() {
       }
     } finally {
       setIsLoading(false);
+      setIsThrottled(true);
+      setTimeout(() => setIsThrottled(false), 3_000);
     }
-  }, [isLoading, activeId]);
+  }, [isLoading, isThrottled, activeId]);
 
   return {
     sessions,
     activeId,
     activeSession,
     isLoading,
+    isThrottled,
     send,
     newSession,
     switchSession,

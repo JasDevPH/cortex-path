@@ -108,9 +108,9 @@ export function ChatMessage({ role, content }: ChatMessageType) {
   }
 
   return (
-    <div className="flex items-start gap-2.5">
+    <div className={`flex gap-2.5 ${isEmpty ? 'items-center' : 'items-start'}`}>
       {/* Cortex avatar */}
-      <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cx-accent-bg text-cx-accent ring-1 ring-cx-accent-border">
+      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cx-accent-bg text-cx-accent ring-1 ring-cx-accent-border">
         <CortexIcon size={11} />
       </div>
 

@@ -6,10 +6,15 @@ export const groq = createGroq({
 });
 
 // Named model instances
-export const groqLarge = groq("llama-3.3-70b-versatile");   // 100K TPD — primary for interpret/ingest
-export const groqFast = groq("llama-3.1-8b-instant");        // 500K TPD — fallback
-export const groqCompact = groq("compound-beta-mini");        // No TPD limit — primary for chat
-export const groqCompound = groq("compound-beta");            // No TPD limit — fallback for chat
+export const groqLarge   = groq("llama-3.3-70b-versatile"); // 100K TPD  — interpret/ingest (quality)
+export const groqFast    = groq("llama-3.1-8b-instant");    // 500K TPD  — final fallback (high quota)
+export const groqQwen    = groq("qwen/qwen3-32b");          // 500K TPD, 60 RPM — primary chat
+export const groqGptOss  = groq("openai/gpt-oss-20b");      // 200K TPD  — chat fallback 1
+
+// NOTE: compound-beta / compound-beta-mini internally call llama-3.3-70b-versatile
+// and drain the same 100K TPD quota — do NOT use for chat.
+export const groqCompact  = groq("compound-beta-mini"); // reserved — not active
+export const groqCompound = groq("compound-beta");       // reserved — not active
 
 // Keep alias so any remaining imports stay working
 export const cortexModel = groqLarge;
@@ -17,6 +22,11 @@ export const cortexModel = groqLarge;
 type AiModel = Parameters<typeof streamText>[0]["model"];
 
 function is429(err: unknown): boolean {
+  // Vercel AI SDK wraps API errors — check both statusCode property and message text
+  if (typeof err === "object" && err !== null) {
+    const e = err as Record<string, unknown>;
+    if (e["statusCode"] === 429 || e["status"] === 429) return true;
+  }
   if (err instanceof Error) {
     const msg = err.message.toLowerCase();
     return msg.includes("429") || msg.includes("rate limit") || msg.includes("rate_limit");
