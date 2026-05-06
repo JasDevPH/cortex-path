@@ -47,7 +47,7 @@ async function batchSummarize(
       generateWithFallback({
         system:
           "You are a code analyzer. Always respond with valid JSON only — no markdown, no explanation.",
-        prompt: `Summarize each file in one plain-English sentence (max 20 words).
+        prompt: `Summarize each file in one plain-English sentence (max 30 words).
 Return ONLY a JSON object where keys are the exact filenames shown: {"filename.ts": "summary"}
 
 ${filesList}`,
@@ -57,9 +57,22 @@ ${filesList}`,
       ),
     ]);
 
-    const match = text.match(/\{[\s\S]*\}/);
-    if (!match) return {};
-    return JSON.parse(match[0]) as Record<string, string>;
+    // Clean up response string - remove markdown code blocks if present
+    const cleanText = text.trim().replace(/^```json\n?/, "").replace(/\n?```$/, "").trim();
+    
+    // Attempt to extract JSON from the cleaned text
+    const match = cleanText.match(/\{[\s\S]*\}/);
+    if (!match) {
+      console.warn("[ingest/batch] No JSON object found in response");
+      return {};
+    }
+    
+    try {
+      return JSON.parse(match[0]) as Record<string, string>;
+    } catch (parseErr) {
+      console.error("[ingest/batch] JSON parse failed for text:", match[0], parseErr);
+      return {};
+    }
   } catch (err) {
     console.error("[ingest/batch] Groq failed:", err);
     return {};
