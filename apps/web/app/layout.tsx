@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ChatWidget } from "@/components/chat/ChatWidgetLoader";
 import { Toaster } from "sonner";
 import { Providers } from "@/components/providers";
 import { ThemeProvider } from "next-themes";
@@ -99,7 +98,6 @@ export default function RootLayout({
         >
           <Providers>
             {children}
-            <ChatWidget />
             <Toaster position="bottom-left" richColors theme="system" />
             <SpeedInsights />
             <Analytics />

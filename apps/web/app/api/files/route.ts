@@ -25,6 +25,19 @@ export async function GET() {
   }
 }
 
+export async function DELETE() {
+  try {
+    const session = await getSessionFromHeaders();
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    await prisma.$executeRaw`DELETE FROM "File" WHERE "userId" = ${session.user.id}`;
+    return NextResponse.json({ ok: true });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
 export async function PATCH(req: Request) {
   try {
     const session = await getSessionFromRequest(req);

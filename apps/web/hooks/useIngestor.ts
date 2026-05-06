@@ -151,6 +151,10 @@ export function useIngestor() {
       // Cache content for interpret-on-click
       contentCache.current = new Map(files.map((f) => [f.path, f.content]));
 
+      // Wipe the previous project's DB rows so the map doesn't show ghost nodes
+      setResults([]);
+      await fetch('/api/files', { method: 'DELETE' });
+
       const batches = chunk(files, BATCH_SIZE);
       setProgress({ current: 0, total: files.length });
       setStatus('processing');
