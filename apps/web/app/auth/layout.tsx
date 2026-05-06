@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
+import { redirect } from 'next/navigation';
+import { getSessionFromHeaders } from '@/lib/get-session';
 
 export const metadata: Metadata = {
   title: 'Sign In or Create Account',
@@ -16,6 +18,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AuthLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function AuthLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const session = await getSessionFromHeaders();
+  if (session?.user) redirect('/app');
   return <>{children}</>;
 }
