@@ -5,12 +5,13 @@ import { ArchitectureMap } from "@/components/map/MapClientWrapper";
 import { getSessionFromHeaders } from "@/lib/get-session";
 import { prisma } from "@cortexpath/database";
 import FileMap, { FileRecord } from "@/components/map/file-map";
+import { redirect } from "next/navigation";
 
 export default async function MapPage() {
   const session = await getSessionFromHeaders();
 
   if (!session) {
-    return <div>Unauthorized</div>;
+    redirect("/")
   }
 
   const dbFiles = await prisma.file.findMany({
