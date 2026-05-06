@@ -2,6 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Cortex chat typing indicator */
+@keyframes cortex-bounce {
+  0%, 80%, 100% { transform: translateY(0);   opacity: 0.4; }
+  40%           { transform: translateY(-4px); opacity: 1;   }
+}
+
 /* Enable class-based dark mode for Tailwind v4 dark: prefix */
 @variant dark (&:where(.dark, .dark *));
 
