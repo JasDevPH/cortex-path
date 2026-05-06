@@ -48,7 +48,7 @@ function is429(err: unknown): boolean {
 /** Fallback wrapper for non-streaming calls (ingest/batch) */
 export async function generateWithFallback(
   params: Omit<Parameters<typeof generateText>[0], "model">,
-  chain: AiModel[] = [groqLarge, groqFast]
+  chain: AiModel[] = [groqQwen, groqLarge, groqFast]
 ): Promise<Awaited<ReturnType<typeof generateText>>> {
   let lastErr: unknown;
   for (let i = 0; i < chain.length; i++) {
@@ -68,7 +68,7 @@ export async function generateWithFallback(
  *  errors surface to the client as a truncated response — user can retry. */
 export async function streamWithFallback(
   params: Omit<Parameters<typeof streamText>[0], "model">,
-  chain: AiModel[] = [groqLarge, groqFast]
+  chain: AiModel[] = [groqQwen, groqLarge, groqFast]
 ): Promise<ReturnType<typeof streamText>> {
   let lastErr: unknown;
   for (let i = 0; i < chain.length; i++) {

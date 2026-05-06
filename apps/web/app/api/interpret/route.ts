@@ -1,5 +1,4 @@
-import { MODEL_MAP, type ModelName } from "@/lib/ai/groq";
-import { streamText } from "ai";
+import { MODEL_MAP, type ModelName, streamWithFallback, groqQwen, groqLarge, groqFast } from "@/lib/ai/groq";
 import { prisma } from "@cortexpath/database";
 import { getSessionFromRequest } from "@/lib/get-session";
 import { recordUsage, checkUsageStatus } from "@/lib/usage";
@@ -60,14 +59,13 @@ export async function POST(req: Request) {
       model?: ModelName;
     };
 
-    // 1. Check DB-backed rate limits
+    // 1. Check DB-backed rate limits for the requested model
     const usageCheck = await checkUsageStatus(userId, model);
     if (usageCheck.status === 'denied') {
       return new Response(JSON.stringify({ error: `Daily limit reached for ${model}.` }), { status: 429 });
     }
 
-    // 2. Fetch metadata (omitted for brevity in this replace call, but should be preserved)
-    // ... (existing metadata lookup logic) ...
+    // 2. Fetch metadata
     let imports: string[] = [];
     let exports: string[] = [];
     let impactedBy: string[] = [];
@@ -98,16 +96,22 @@ export async function POST(req: Request) {
 
     const prompt = `${contextBlock}\n\n\`\`\`\n${codeSnippet}\n\`\`\``;
 
-    // 3. Stream with selected model
-    const aiModel = MODEL_MAP[model] || MODEL_MAP["qwen/qwen3-32b"];
-    const result = streamText({
-      model: aiModel,
+    // 3. Define fallback chain based on selected model
+    let chain = [groqQwen, groqLarge, groqFast];
+    if (model === 'llama-3.3-70b-versatile') chain = [groqLarge, groqFast];
+    if (model === 'llama-3.1-8b-instant') chain = [groqFast];
+
+    // 4. Stream with fallback
+    const result = await streamWithFallback({
       system: SYSTEM_PROMPT,
       prompt,
-      onFinish: async (event) => {
-        await recordUsage(userId, model, event.usage.totalTokens);
-      }
-    });
+          onFinish: async (event) => {
+          // Record usage for the model that actually finished
+          // The SDK provides the model name/ID in the event
+          const finishedModel = (event as any).modelId || (event as any).model || model;
+          await recordUsage(userId, String(finishedModel), event.usage.totalTokens);
+        }
+    }, chain);
 
     return result.toTextStreamResponse({
       headers: {

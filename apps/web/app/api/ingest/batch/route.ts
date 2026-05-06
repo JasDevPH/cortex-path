@@ -53,7 +53,7 @@ Return ONLY a JSON object where keys are the exact filenames shown: {"filename.t
 ${filesList}`,
       }),
       new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Groq batch timeout")), 20_000)
+        setTimeout(() => reject(new Error("Groq batch timeout")), 60_000)
       ),
     ]);
 

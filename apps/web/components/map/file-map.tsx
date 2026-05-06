@@ -149,7 +149,7 @@ export default function FileMap({
         : `blast radius: ${blastIds.size} file${
             blastIds.size > 1 ? "s" : ""
           } depend on ${node.data.name}`;
-    console.log("LABEL:", label);
+
 
     setSelectedNode({
       ...node,

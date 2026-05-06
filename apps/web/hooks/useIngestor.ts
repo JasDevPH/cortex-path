@@ -15,7 +15,7 @@ export type FileResult = {
   content?: string | null;
 };
 
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 3;
 
 const CODE_EXTS = new Set([
   '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs',
