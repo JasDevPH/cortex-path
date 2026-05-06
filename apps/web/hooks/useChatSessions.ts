@@ -42,6 +42,16 @@ function loadFromStorage(): ChatSession[] {
   }
 }
 
+/** Strips <think>...</think> reasoning blocks emitted by qwen models before display. */
+function stripThinkBlocks(text: string): string {
+  // Remove fully closed blocks
+  let out = text.replace(/<think>[\s\S]*?<\/think>/g, '');
+  // If a block is still open (streaming), hide everything from the opening tag onwards
+  const openIdx = out.indexOf('<think>');
+  if (openIdx !== -1) out = out.slice(0, openIdx);
+  return out.trimStart();
+}
+
 function saveToStorage(sessions: ChatSession[]) {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(sessions));
@@ -167,7 +177,7 @@ export function useChatSessions() {
         const { done, value } = await reader.read();
         if (done) break;
         accumulated += decoder.decode(value, { stream: true });
-        const snap = accumulated;
+        const snap = stripThinkBlocks(accumulated);
         setSessions(prev => prev.map(s => {
           if (s.id !== capturedSessionId) return s;
           const msgs = [...s.messages];
