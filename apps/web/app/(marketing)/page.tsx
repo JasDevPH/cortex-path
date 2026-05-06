@@ -212,7 +212,7 @@ function HeroSection() {
                 href="#mobile"
                 className="flex items-center gap-2 rounded border border-cx-border px-5 py-2.5 font-mono text-sm text-cx-muted transition-all hover:border-cx-border/60 hover:text-foreground"
               >
-                <Smartphone size={14} /> View on Mobile
+                <Smartphone size={14} /> Download Mobile App
               </a>
             </motion.div>
 
