@@ -1,4 +1,11 @@
-import { MODEL_MAP, type ModelName, streamWithFallback, groqQwen, groqLarge, groqFast } from "@/lib/ai/groq";
+import {
+  MODEL_MAP,
+  type ModelName,
+  streamWithFallback,
+  groqQwen,
+  groqLarge,
+  groqFast,
+} from "@/lib/ai/groq";
 import { prisma } from "@cortexpath/database";
 import { getSessionFromRequest } from "@/lib/get-session";
 import { recordUsage, checkUsageStatus } from "@/lib/usage";
@@ -49,10 +56,18 @@ Use a terminal-chic tone: professional, precise, and insightful. No filler. Teac
 export async function POST(req: Request) {
   try {
     const session = await getSessionFromRequest(req);
-    if (!session) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    if (!session)
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
     const userId = session.user.id;
 
-    const { fileName, filePath, codeSnippet, model = "qwen/qwen3-32b" } = await req.json() as {
+    const {
+      fileName,
+      filePath,
+      codeSnippet,
+      model = "qwen/qwen3-32b",
+    } = (await req.json()) as {
       fileName: string;
       filePath: string;
       codeSnippet: string;
@@ -61,8 +76,11 @@ export async function POST(req: Request) {
 
     // 1. Check DB-backed rate limits for the requested model
     const usageCheck = await checkUsageStatus(userId, model);
-    if (usageCheck.status === 'denied') {
-      return new Response(JSON.stringify({ error: `Daily limit reached for ${model}.` }), { status: 429 });
+    if (usageCheck.status === "denied") {
+      return new Response(
+        JSON.stringify({ error: `Daily limit reached for ${model}.` }),
+        { status: 429 },
+      );
     }
 
     // 2. Fetch metadata
@@ -89,37 +107,52 @@ export async function POST(req: Request) {
 
     const contextBlock = [
       `File path : ${filePath || fileName}`,
-      imports.length  ? `Imports   : ${imports.join(', ')}` : null,
-      exports.length  ? `Exports   : ${exports.join(', ')}` : null,
-      impactedBy.length ? `Depended on by: ${impactedBy.join(', ')}` : 'Depended on by: (no other file imports this one)',
-    ].filter(Boolean).join('\n');
+      imports.length ? `Imports   : ${imports.join(", ")}` : null,
+      exports.length ? `Exports   : ${exports.join(", ")}` : null,
+      impactedBy.length
+        ? `Depended on by: ${impactedBy.join(", ")}`
+        : "Depended on by: (no other file imports this one)",
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     const prompt = `${contextBlock}\n\n\`\`\`\n${codeSnippet}\n\`\`\``;
 
     // 3. Define fallback chain based on selected model
     let chain = [groqQwen, groqLarge, groqFast];
-    if (model === 'llama-3.3-70b-versatile') chain = [groqLarge, groqFast];
-    if (model === 'llama-3.1-8b-instant') chain = [groqFast];
+    if (model === "llama-3.3-70b-versatile") chain = [groqLarge, groqFast];
+    if (model === "llama-3.1-8b-instant") chain = [groqFast];
 
     // 4. Stream with fallback
-    const result = await streamWithFallback({
-      system: SYSTEM_PROMPT,
-      prompt,
-          onFinish: async (event) => {
+    const result = await streamWithFallback(
+      {
+        system: SYSTEM_PROMPT,
+        prompt,
+        onFinish: async (event) => {
           // Record usage for the model that actually finished
           // The SDK provides the model name/ID in the event
-          const finishedModel = (event as any).modelId || (event as any).model || model;
-          await recordUsage(userId, String(finishedModel), event.usage.totalTokens);
-        }
-    }, chain);
+          const finishedModel =
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (event as any).modelId || (event as any).model || model;
+          await recordUsage(
+            userId,
+            String(finishedModel),
+            event.usage.totalTokens,
+          );
+        },
+      },
+      chain,
+    );
 
     return result.toTextStreamResponse({
       headers: {
-        'X-Usage-Status': usageCheck.status,
-      }
+        "X-Usage-Status": usageCheck.status,
+      },
     });
   } catch (error: unknown) {
     console.error("[API Interpret] Error:", error);
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+    });
   }
 }
